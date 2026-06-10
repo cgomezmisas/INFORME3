@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-node@v4  # Actualizado a v4
         with:
           node-version: '18'
-          cache: 'npm' # Ayuda a cachear las dependencias
+#          cache: 'npm' # Ayuda a cachear las dependencias
 
       - name: Install Project Dependencies
         run: |
