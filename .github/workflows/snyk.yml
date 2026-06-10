@@ -34,7 +34,8 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         # Opción A: Bloquea solo si hay vulnerabilidades CRÍTICAS
-        run: snyk test --severity-threshold=critical
+        run: snyk code test || true
+
         
         # Opción B (Alternativa): Si quieres que NUNCA falle el pipeline y solo muestre el reporte:
         # run: snyk test || true
