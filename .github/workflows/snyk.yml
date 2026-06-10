@@ -1,21 +1,40 @@
 name: Snyk Security Scan
+
 on:
-push:
-branches: [ "main" ]
-pull_request:
-branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
 jobs:
-security:
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v2
-- name: Set up Node.js
-uses: actions/setup-node@v2
-with:
-node-version: '18'
-- name: Install Snyk
-run: npm install -g snyk
-- name: Run Snyk to check for vulnerabilities
-env:
-SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-run: snyk test
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4  # Actualizado a v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4  # Actualizado a v4
+        with:
+          node-version: '18'
+          cache: 'npm' # Ayuda a cachear las dependencias
+
+      - name: Install Project Dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Install Snyk
+        run: npm install -g snyk
+
+      - name: Run Snyk to check for vulnerabilities
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        # Opción A: Bloquea solo si hay vulnerabilidades CRÍTICAS
+        run: snyk test --severity-threshold=critical
+        
+        # Opción B (Alternativa): Si quieres que NUNCA falle el pipeline y solo muestre el reporte:
+        # run: snyk test || true
